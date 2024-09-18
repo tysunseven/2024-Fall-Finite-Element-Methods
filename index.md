@@ -1,7 +1,10 @@
 # 2024-Fall-Finite-Element-Methods
+
 ---
 layout: default
+title: 2024-Fall-Finite-Element-Methods
 ---
+
 <p><a href="https://tysunseven.github.io/2024-Fall-Finite-Element-Methods/WrittenAssignments/Week1_WrittenAssignment.pdf">第一周书面作业</a></p>
 
 ## 绪论
