@@ -1,0 +1,5 @@
+# _config.yml
+title: My LaTeX Markdown Site
+description: A site with LaTeX support using MathJax
+markdown: kramdown
+highlighter: rouge
