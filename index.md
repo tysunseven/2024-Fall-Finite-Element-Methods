@@ -5,22 +5,18 @@ title: 2024-Fall-Finite-Element-Methods
 
 # 2024-Fall-Finite-Element-Methods
 
-
-
 <p><a href="https://tysunseven.github.io/2024-Fall-Finite-Element-Methods/WrittenAssignments/Week1_WrittenAssignment.pdf">第一周书面作业</a></p>
 
-## 绪论
-任务拆解
-- 有限差分方法
-- 变分问题
-- 极小化问题
+- [2024-Fall-Finite-Element-Methods](#2024-fall-finite-element-methods)
+  - [回顾有限差分方法](#回顾有限差分方法)
+  - [两点边值问题、变分问题、极小化问题](#两点边值问题变分问题极小化问题)
+  - [有限元方法的基本思想](#有限元方法的基本思想)
+  - [基循环→单元循环](#基循环单元循环)
+  - [误差估计](#误差估计)
 
 
-有限元方法是 50 年代首先在连续体力学领域——飞机结构静、动态特性分析中应用的一种有效的数值分析方法，广泛地应用于求解热传导、电磁场、流体力学等连续性问题。 
-  
-有限元方法是将两点边值问题转化为变分问题或者是极小化问题，再用有限维空间代替无穷维空间，找到变分问题或者是极小化问题的逼近解。
-
-下面我们先来回顾一下有限差分方法. 考虑两点边值问题
+## 回顾有限差分方法
+考虑两点边值问题
 
 $$ 
 (\mathrm{P}):\begin{cases}
@@ -106,7 +102,7 @@ $$
 
 这些缺点使得有限差分方法在处理复杂几何或边界条件时不如有限元方法和有限体积方法那样灵活。因此，有限差分方法通常适用于简单几何形状上的基本边值问题，而在处理实际工程问题或复杂边界条件时，往往需要考虑其他数值方法。
 
-根据你上传的图片，结合两点边值问题的内容，变分问题的等价形式可以总结如下：
+## 两点边值问题、变分问题、极小化问题
 
 首先，原始的两点边值问题是：
 
@@ -181,31 +177,21 @@ $$
 通过求解极小化问题，我们可以得到与两点边值问题等价的数值解。具体的数值方法，如有限元法，通常就是基于这个极小化框架来进行离散化和求解的。也成为Ritz意义下的弱解
 
 
-### 变分问题 $ (W) $ 当且仅当 极小化问题 $ (M) $
+> **变分问题的解是极小化问题的解**
 
-**证明：**
+假设 $ u $ 是变分问题 $ (W) $ 的解. 对于任意 $ v \in V $，要证 $ J(u) \leqslant J(v) $.
 
-#### $ (W) \Rightarrow (M) $
-
-假设 $ u $ 是 $ (W) $ 的解。
-
-对于任意 $ v \in \mathcal{V} $，要证 $ J(u) \leq J(v) $。
-
-令 $ w = v - u $，则 $ v = u + w $。注意 $ w \in \mathcal{V} $。
+令 $ w = v - u $，则 $ v = u + w $. 直接计算有
 
 $$
-J(v) = J(u + w) = \frac{1}{2}(u + w, u + w) - (f, u + w)
+J(v) = J(u + w) = \frac{1}{2}a(u + w, u + w) - (f, u + w)
 $$
 
 $$
-= \frac{1}{2}(u, u) + \frac{1}{2}(w, w) + (u, w) - (f, u) - (f, w)
+= \frac{1}{2}(u', u') + \frac{1}{2}(w', w') + (u', w') - (f, u) - (f, w)
 $$
 
-$$
-= \frac{1}{2}(u, u) + \frac{1}{2}(w, w) + (u, w) - (f, u) - (f, w)
-$$
-
-因为 $ u $ 是 $ (W) $ 的解，且 $ w \in \mathcal{V} $，由定义知
+因为 $ u $ 是 $ (W) $ 的解, 且 $ w \in V $, 由定义知
 
 $$
 (u', w') - (f, w) = 0
@@ -214,225 +200,104 @@ $$
 故
 
 $$
-J(v) = \frac{1}{2}(u, u) + \frac{1}{2}(w, w) \geq J(u)
+J(v) = J(u) + \frac{1}{2}(w', w') \geqslant J(u).
 $$
 
-因此，$ J(u) \leq J(v) $，即证明了 $ (W) \Rightarrow (M) $。
+> **极小化问题的解是变分问题的解**
 
-#### $ (M) \Rightarrow (W) $
-
-对于任意 $ v \in \mathcal{V} $，设 $ u + \varepsilon v \in \mathcal{V} $。
+对于任意 $ v \in V $, 有 $ u + \varepsilon v \in V $, 
 
 $$
-J(u) \leq J(u + \varepsilon v)
+J(u) \leqslant J(u + \varepsilon v)
 $$
 
-令 $ g(\varepsilon) = J(u + \varepsilon v) $
+令 $  $
 
 $$
-= \frac{1}{2}(u + \varepsilon v, u + \varepsilon v) - (f, u + \varepsilon v)
-$$
-
-$$
-= \frac{1}{2}(u, u) + \varepsilon(u, v) + \frac{\varepsilon^2}{2}(v, v) - (f, u) - \varepsilon(f, v)
-$$
-
-由于 $ g(\varepsilon) $ 在 $ \varepsilon = 0 $ 时取极小值，故有 $ g'(0) = 0 $。
-
-$$
-g'(0) = (u, v) - (f, v) = 0
-$$
-
-因此
-
-$$
-(u', v') - (f, v) = 0
-$$
-
-即证明了 $ (M) \Rightarrow (W) $。
-
----
-
-这段笔记主要证明了变分问题 $ (W) $ 与极小化问题 $ (M) $ 的等价性，分为两个方向进行证明：
-
-1. $ (W) \Rightarrow (M) $：假设 $ u $ 是变分问题的解，利用定义证明 $ u $ 也是极小化问题的解；
-2. $ (M) \Rightarrow (W) $：假设 $ u $ 是极小化问题的解，利用 $ g(\varepsilon) $ 作为辅助函数，通过导数证明 $ u $ 满足变分问题的条件。
-
-### $ (W) \Rightarrow (P) $
-
-设 $ u \in \mathcal{V} $ 是变分问题 $ (W) $ 的解，且 $ u'' $ 连续，边界条件 $ v(0) = v(1) = 0 $。
-
-$$
-a(u, v) = \left\langle f, v \right\rangle, \quad \forall v \in \mathcal{V}
-$$
-
-即
-
-$$
-0 = \int_0^1 u' v' \, dx - \int_0^1 f v \, dx
+g(\varepsilon) = J(u + \varepsilon v)= \frac{1}{2}a(u + \varepsilon v, u + \varepsilon v) - (f, u + \varepsilon v)
 $$
 
 $$
-= -\int_0^1 u'' v \, dx + \left[ u'(1)v(1) - u'(0)v(0) \right] - \int_0^1 f v \, dx
+= \frac{1}{2}(u', u') + \varepsilon(u', v') + \frac{\varepsilon^2}{2}(v', v') - (f, u) - \varepsilon(f, v)
+$$
+
+由于 $ g(\varepsilon) $ 在 $ \varepsilon = 0 $ 时取极小值，故有
+
+$$
+g'(0) = (u', v') - (f, v) = 0.
+$$
+
+> **变分问题的 $ C^2 $ 解是两点边值问题的解**
+
+设 $ u\in C^2[0,1]  $ 是变分问题 $ (W) $ 的解，对任意 $ v\in V $,
+
+$$
+0 = \int_0^1 u' v' \mathrm{d}x - \int_0^1 f v \mathrm{d}x = -\int_0^1 u'' v \mathrm{d}x + \left[ u'(1)v(1) - u'(0)v(0) \right] - \int_0^1 f v \mathrm{d}x
 $$
 
 由于边界条件 $ v(0) = v(1) = 0 $，上述表达式化简为：
 
 $$
-= -\int_0^1 u'' v \, dx - \int_0^1 f v \, dx
+-\int_0^1 u'' v \mathrm{d}x = \int_0^1 f v \mathrm{d}x,\quad \forall v\in V\Longrightarrow -u''=f.
 $$
 
-因此
+> **变分问题解的唯一性**
+
+假设 $ u_1, u_2 $ 是 $ (W) $ 问题的解, 则
 
 $$
--\int_0^1 u'' v \, dx = \int_0^1 f v \, dx, \quad \forall v \in \mathcal{V}
+a(u_1 - u_2, v) = 0, \quad \forall v \in V
 $$
 
-这表明：
+取 $ v = u_1 - u_2 $, 则
 
 $$
-u'' = f
+a(u_1 - u_2, u_1 - u_2)= \int_0^1 (u_1' - u_2')^2 \mathrm{d}x = 0\Longrightarrow u_1'-u_2'\equiv 0
 $$
 
-#### 变分问题解的唯一性
+故 $ u_1 - u_2 $ 为常数. 又因边界条件 $ u_1(0) = u_2(0) $，故 $ u_1 = u_2 $.
 
-假设 $ u_1, u_2 $ 是 $ (W) $ 问题的解，且 $ u_1, u_2 \in \mathcal{V} $。
+## 有限元方法的基本思想
+首先将两点边值问题转化为弱化的变分问题或极小化问题, 然后用有限维求解空间 $ V_h \subset V $ 代替无限维求解空间 $ V $, 得到变分问题或极小化问题的有限维近似版本的解 $ u_h $, 期待 $ u_h $ 收敛于 $ u $.
 
+下面我们以Baby问题为例，展示求解过程. 首先把区间 $[0,1]$ 分成
 $$
-\begin{cases}
-a(u_1, v) = \left\langle f, v \right\rangle, \quad \forall v \in \mathcal{V} \\
-a(u_2, v) = \left\langle f, v \right\rangle, \quad \forall v \in \mathcal{V}
-\end{cases}
-$$
-
-因此：
-
-$$
-a(u_1 - u_2, v) = 0, \quad \forall v \in \mathcal{V}
+0=x_0<x_1<\cdots<x_N<x_{N+1}=1
 $$
 
-取 $ v = u_1 - u_2 $，则：
-
+一共 $ N $ 个中间分点, $ N+1 $ 个区间, 记 $ I_j=(x_{j-1},x_j) $, $ h_j=x_{j}-x_{j-1} $, $h = \max h_i$. 定义连续分段一次多项式函数空间（实际上这个空间依赖于区间的剖分, 但我们在记号上只体现出最大区间长度$ h $）
 $$
-a(u_1 - u_2, u_1 - u_2) = 0
-$$
-
-$$
-\int_0^1 (u_1' - u_2')^2 \, dx = 0 \quad \Rightarrow \quad u_1' - u_2' = 0, \quad \forall x \in (0, 1)
+V_h=\lbrace v\in C[0,1]\mid v(0)=v(1)=0, v\mid_{I_j}\in \mathbb{P}_1(I_j), j=1,\cdots,N+1 \rbrace
 $$
 
-故 $ u_1 - u_2 $ 为常数。又因边界条件 $ u_1(0) = u_2(0) $，故 $ u_1 = u_2 $。
-
----
-
-这段笔记主要证明了变分问题 $ (W) $ 的解与对应的偏微分方程 $ (P) $ 的等价性，同时也证明了变分问题解的唯一性。
-
-
-首先，我会处理第一张图片中的内容：
-
-### 笔记内容（2021-09-07）
-
-#### 弱解空间的解的唯一性
-
-设 $\Omega$ 为定义区域，设 $u_1, u_2$ 为解，$v \in V$，则：
-
+考虑变分问题, 我们也就是要寻找 $ u_h\in V_h $ 使得
 $$
-a(u_1 - u_2, v) = 0
+a(u_h,v_h)=(f,v_h),\quad \forall v_h\in V_h
 $$
 
-即：
-
+如果我们能找到 $ V_h $ 的一组基 $ \lbrace \phi_{i} \rbrace_{i=1}^N $, 那么上述要求等价于（我还没说明 $V_h$ 的维数就是 $N$, 但这里就这样用了）
 $$
-a(u_1, v) - a(u_2, v) = 0
-$$
-
-再根据 $v = u_1 - u_2 \in V$，可以得出：
-
-$$
-a(u_1 - u_2, u_1 - u_2) = 0
+a(u_h,\phi_i)=(f,\phi_i),\quad i=1,\cdots,N.
 $$
 
-因此 $u_1 - u_2 = 0$，则 $u_1 = u_2$，所以解的唯一性得证。
-
-#### 有限元方法的基本思想
-
-1. **将高阶、偏微分问题转化为变分问题（相对的低阶问题）。**
-2. **用有限维逼近空间 $V_h \subset V$, $V_h \subset C^0$。**
-3. **利用有限元法逼近复杂边界问题。**
-
-#### Step-by-step 求解过程
-
-1. 划分区域：
-   把区域 $\Omega$ 分成有限单元：设 $x_1, x_2, \dots, x_{N+1}$，定义 $h = \max h_i$。
-   
-2. 定义分段线性函数构造有限维空间 $V_h$。
-
-3. 求解：
-   - 对所有 $V_h \subset C^0$，有：
-   
-     $$
-     a(u_h, v_h) = \int_{\Omega} f v_h \quad \forall v_h \in V_h
-     $$
-
-4. 利用基函数逼近解：
-   - 设 $u_h = \sum_{j=1}^{N} U_j \phi_j(x)$，从而有：
-
-     $$
-     a(u_h, v_h) = \sum_{i,j} A_{ij} U_j
-     $$
-
----
-接下来是第二张图片中的内容整理：
-
-### 笔记内容（继续）
-
-我们定义有限维空间 $V_h$ 为由基函数 $\phi_1, \phi_2, \dots, \phi_N$ 张成的空间：
-
-$$
-V_h = \text{span} \{\phi_1, \phi_2, \dots, \phi_N\}
+如果我们将 $ u_h $ 按基展开 $ u_h=u_i\phi_i $, 那么上述要求等价于
+$$  
+u_ia(\phi_i,\phi_j)=(f,\phi_j),\quad j=1,\cdots,N\Longleftrightarrow AU=F.
 $$
 
-则 $u_h \in V_h$ 可以表示为：
+我们使用如下的基函数
+
+$$ \phi_j(x)=\frac{x - x_{j-1}}{x_j - x_{j-1}},x \in [x_{j-1}, x_j]\quad \frac{x_{j+1} - x}{x_{j+1} - x_j},x \in [x_j, x_{j+1}],\quad j=1,\cdots ,N. $$
+
+容易想明白 $ \lbrace \phi_i \rbrace_{i=1}^N $ 确实构成 $ V_h $ 的一组基, 并且对于 $ v\in V_h $, 有
+
+$$ v(x)=v(x_j)\phi_j(x). $$
+
+接下来我们计算矩阵 $ A $ 的系数
 
 $$
-u_h(x) = \sum_{i=1}^{N} U_i \phi_i(x)
+A_{ij} = a(\phi_i, \phi_j) = \int_0^1 \phi_i'\phi_j' \mathrm{d}x
 $$
-
-#### 双线性形式 $a(u_h, v_h)$ 的计算
-
-对于所有 $u_h, v_h \in V_h$，设 $u_h(x) = \sum_{i=1}^{N} U_i \phi_i(x)$，且 $v_h(x) = \sum_{j=1}^{N} V_j \phi_j(x)$，双线性形式 $a(u_h, v_h)$ 定义为：
-
-$$
-a(u_h, v_h) = \sum_{i=1}^{N} \sum_{j=1}^{N} U_i V_j a(\phi_i, \phi_j)
-$$
-
-其中 $a(\phi_i, \phi_j)$ 为双线性形式在基函数上的值，可通过积分得到：
-
-$$
-a(\phi_i, \phi_j) = \int_{\Omega} \nabla \phi_i \cdot \nabla \phi_j \, dx
-$$
-
-#### 组装刚度矩阵 $A$
-
-为了求解有限元方程，需要组装刚度矩阵 $A$，其元素为：
-
-$$
-A_{ij} = a(\phi_i, \phi_j) = \int_{\Omega} \nabla \phi_i \cdot \nabla \phi_j \, dx
-$$
-
-通过对每个单元进行积分，我们可以得到 $A_{ij}$ 的具体值。
-
----
-
-#### 具体求解过程
-
-对每个有限单元，我们通过定义基函数 $\phi_i$ 和 $\phi_j$，计算双线性形式 $a(\phi_i, \phi_j)$：
-
-$$
-A_{ij} = \int_{x_{i-1}}^{x_i} \frac{1}{h_i} dx + \int_{x_i}^{x_{i+1}} \frac{1}{h_{i+1}} dx
-$$
-
-这样，对于每个 $i$ 和 $j$，我们都可以得到 $A_{ij}$ 的表达式。并且，矩阵 $A$ 的结构通常是稀疏的，具体形式如下：
 
 $$
 A =
@@ -441,73 +306,65 @@ A =
 -\frac{1}{h_2} & \frac{1}{h_2} + \frac{1}{h_3} & -\frac{1}{h_3} & \dots & 0 \\
 0 & -\frac{1}{h_3} & \ddots & \ddots & \vdots \\
 \vdots & & \ddots & & -\frac{1}{h_N} \\
-0 & \dots & & -\frac{1}{h_N} & \frac{1}{h_N}
+0 & \dots & & -\frac{1}{h_N} & \frac{1}{h_N}+\frac{1}{h_{N+1}}
 \end{pmatrix}
 $$
 
----
 
-最后，有限元方法的离散化问题可以表示为求解矩阵方程：
 
-$$
-A \mathbf{U} = \mathbf{F}
-$$
+## 基循环→单元循环
+此处的循环指的是我们在代码中组装刚度矩阵 $ A $ 的方式, 在前面的分析中, 我们是从方程组 $ (u_h,\phi_j)=(f,\phi_j) $ 出发, 通过遍历基函数 $ \phi_j $ 来依次得到 $ A $ 的第 $ j $ 行. 这种想法非常自然, 但在推广到高维的时候会比较困难, 因为比如三角网格上的基函数会比较复杂, 为此我们接下来考虑另一种循环方式, 用单元作循环, 为此我们需要考虑某个单元对整体刚度矩阵 $ A $ 的贡献. 为此, 我们需要把基函数 $ \phi_j $ 拆成不同单元上的部分, 比较自然的思路是记号的下标来记录这是第几个单元, 因此 $ \phi_j $ 应该被拆成一个 下标为 $ j $ 的函数和一个下标为 $ j+1 $ 的函数, 另外其实每个单元上一共只有两种行为, 要么斜向下一条线段, 要么斜向上一条线段, 我们用上标 $ 0 $ 来表示斜向上的, 上标 $ 1 $ 表示斜向下的, 这样我们定义了局部基函数
+$$ \psi_j^0=\frac{x_j-x}{x_j-x_{j-1}}=\frac{1}{h_j}(x_j-x),\quad \psi_j^1=\frac{x-x_{j-1}}{x_j-x_{j-1}}=\frac{1}{h_j}(x-x_{j-1}) $$
+要注意上面两个函数其实并不落在 $ V_h $ 中, 但因为我们不用他们来做理论的分析, 只是做运算, 所以没关系. 这样一来我们就有 
+$$ \phi_j(x)=\psi_j^1(x)+\psi^0_{j+1}(x) $$
+所以看到 $ \psi_j $ 出现在 $ \phi_j(x) $ 的 $ \psi_{j}^1(x) $ 部分和 $ \phi_{j-1}(x) $ 的 $ \psi_{j}^0(x) $部分, 所以第 $ j $ 个单元对刚度矩阵 $ A $ 的贡献出现在
+$$ \begin{pmatrix}a(\phi_{j-1}(x),\phi_{j-1}(x))&a(\phi_{j-1}(x),\phi_{j}(x))\\a(\phi_{j}(x),\phi_{j-1}(x))&a(\phi_{j}(x),\phi_{j}(x))\end{pmatrix} $$
 
-其中，$\mathbf{U} = (U_1, U_2, \dots, U_N)^T$ 是待求的系数向量，$\mathbf{F}$ 是右端项通过同样的方法离散化得到的向量。
+这些位置, 如果只把其中第 $ j $ 个单元带来的贡献写出来的话就是
+$$ \begin{pmatrix}a(\psi_{j}^0(x),\psi_{j}^0(x))&a(\psi_{j}^0(x),\psi_{j}^1(x))\\a(\psi_{j}^1(x),\psi_{j}^0(x))&a(\psi_{j}^1(x),\psi_{j}^1(x))\end{pmatrix}=:\begin{pmatrix} k_j^{00}&k_j^{01}\\k_j^{10}&k_j^{11} \end{pmatrix}=\frac{1}{h_j}\begin{pmatrix}1&-1\\-1&1\end{pmatrix} $$
 
----
+## 误差估计
+设 $ u\in V=H_0^1(I) $ 是如下变分问题的解,
 
-接下来我将处理最后一张图片中的内容。
+$$ a(u,v)=(f,v),\quad \forall v\in V $$
 
-这是第三张图片中的内容整理：
+取 $ V_h\in V $, 设 $ u_h\in V_h $ 是如下有限元问题的解
+$$ a(u_h,v_h)=(f,v_h),\quad \forall v_h\in V_h $$
 
-### 笔记内容（继续）
+$ u $ 当然满足如上等式, 但 $ u $ 不一定在子空间 $ V_h $ 中, 所以我们期待 $ u_h $ 作为 $ u $ 在子空间 $ V_h $ 中的投影, 当子空间 $ V_h $ 逼近 $ V $, $ u_h $ 也逼近 $ u $. 投影的说法在数学上可以严格化为如下误差方程
+$$ a(u-u_h,v_h)=0,\quad \forall v_h\in V_h $$
 
-对于任意 $u_h, v_h \in V_h$，可以将弱形式写为以下方程：
+当 $ a $ 定义了空间 $ V $ 上的内积时, $ u_h $ 就是 $ u $ 在 $ V_h $ 上的正交投影. 本节的标题误差估计说的就是对 $ u-u_h $ 的范数进行估计, 做了这个估计之后我们才知道用 $ u_h $ 来近似 $ u $ 的效果怎么样, 并且我们希望这个估计能与区间最大长度 $ h $ 建立起联系.
 
-$$
-a(u_h, v_h) = \int_{\Omega} \nabla u_h \cdot \nabla v_h \, dx = \sum_{i=1}^{N} \sum_{j=1}^{N} U_i V_j a(\phi_i, \phi_j)
-$$
 
-其中，$a(\phi_i, \phi_j)$ 表示基函数的双线性形式。
+> **定理**  $ \|(u-u_h)'\|_{L^2}\leqslant \|(u-v)'\|_{L^2}, \forall v\in V_h. $
 
-### 刚度矩阵 $A$ 的构造
+> **证明** $ ((u-u_h)',(u-u_h)')=((u-u_h)',(u-v)'+(v-u_h)')=((u-u_h)',(u-v)')\leqslant \|(u-u_h)'\|_{L^2}\|(u-v)'\|_{L^2} $.
 
-刚度矩阵 $A$ 的元素 $A_{ij}$ 定义为：
+> **推论** $ \|(u-u_h)'\|_{L^2}=\inf_{v\in V_h}\|(u-v)'\|_{L^2} $
 
-$$
-A_{ij} = a(\phi_i, \phi_j) = \int_{x_{i-1}}^{x_i} \frac{1}{h_i} dx + \int_{x_i}^{x_{i+1}} \frac{1}{h_{i+1}} dx
-$$
+上述推论的好处在于, 我们已经在前面的课程中研究过一个函数 $ u $ 及其分段线性插值 $ u_I $ 之间的误差估计, 而 $ u_I $ 又恰恰落在 $ V_h $ 中, 结合上述推论, 对 $ u-u_I $ 的估计可以直接给出 $ u-u_h $ 的估计.
 
-根据积分的计算，刚度矩阵 $A$ 的具体形式可以写为：
+> **定理** 分段线性插值的一阶导数的 $L^2$ 误差：$\|(u-u_I)'\|_{L^2}\leqslant Ch\|u''\|_{L^2}$, 其中 $ C $是一个与 $ u,h $无关的常数.
 
-$$
-A = 
-\begin{pmatrix}
-\frac{1}{h_1} + \frac{1}{h_2} & -\frac{1}{h_2} & 0 & \dots & 0 \\
--\frac{1}{h_2} & \frac{1}{h_2} + \frac{1}{h_3} & -\frac{1}{h_3} & \dots & 0 \\
-0 & -\frac{1}{h_3} & \ddots & \ddots & \vdots \\
-\vdots & & \ddots & & -\frac{1}{h_N} \\
-0 & \dots & & -\frac{1}{h_N} & \frac{1}{h_N}
-\end{pmatrix}
-$$
+> **证明** 由Rolle中值定理，存在 $ \xi_j\in (x_j,x_{j+1}) $ 使得 $ (u-u_I)'(\xi_j)=0 $. 对任意 $ x\in (x_j,x_{j+1}) $,
+> $$ (u-u_I)'(x)=\int_{\xi}^x(u-u_I)''(t)\mathrm{d}t=\int_{\xi}^xu''(t)\mathrm{d}t\leqslant |x-\xi|^{\frac{1}{2}}\|u''\|_{L^2[\xi,x]}\leqslant |x-\xi|^{\frac{1}{2}}\|u''\|_{L^2[x_j,x_{j+1}]}. $$
+>
+> $$ \int_{x_j}^{x_{j+1}}(u-u_I)'(x)^2\mathrm{d}x\leqslant \|u''\|_{L^2[x_j,x_{j+1}]}^2\int_{x_j}^{x_{j+1}}|x-\xi|\mathrm{d}x\leqslant h^2 \|u''\|_{L^2[x_j,x_{j+1}]}^2\Longrightarrow \|(u-u_I)'\|_{L^2}^2\leqslant h^2\|u''\|_{L^2}^2 $$ 
 
-#### 边界条件的处理
+> **定理** 有限元方法近似解的 $ L^2 $ 误差：$ \|u-u_h\|_{L^2}\leqslant Ch^2\|u''\|_{L^2} $, 其中 $ C $是一个与 $ u,h $无关的常数.
 
-在处理边界问题时，特别是在有限元方法中，需要根据边界条件对刚度矩阵和右端项进行修正。例如，当施加Dirichlet边界条件时，$u_h(x)$ 在边界点的值被固定。
-
-边界条件会影响矩阵方程 $A \mathbf{U} = \mathbf{F}$ 的解法。例如，考虑Dirichlet边界条件 $u(0) = u(1) = 0$，我们需要对相应的矩阵 $A$ 进行修改。
-
-### 方程的最终形式
-
-通过构造刚度矩阵 $A$ 和右端向量 $\mathbf{F}$，我们可以得到一个线性方程组：
-
-$$
-A \mathbf{U} = \mathbf{F}
-$$
-
-其中，$\mathbf{U} = (U_1, U_2, \dots, U_N)^T$ 是未知的系数向量，表示解的近似值，$\mathbf{F}$ 是通过对右端项进行离散化得到的向量。
-
----
-
-以上就是三张图片内容的整理和公式表示。如果需要进一步调整或有其他要求，请告诉我！
+> **证明** 考虑对偶方程
+> $$ \begin{cases}-w''=u-u_h\\w(0)=w(1)=0\end{cases} $$
+> 
+> 我们有
+> $$ \|u-u_h\|^2_{L^2}=(u-u_h,u-u_h)=(u-u_h,-w'')=((u-u_h)',w')$$
+>
+> 由误差方程, 对任意的 $ v_h\in V_h $有
+> $$ \|u-u_h\|^2_{L^2}=((u-u_h)',(w-v_h)')\leqslant \|(u-u_h)'\|_{L^2}\|(w-v_h)'\|_{L^2} $$
+>
+> 取 $ v_h=w_I $, 则有
+> $$ \|u-u_h\|^2_{L^2}\leqslant h\|(u-u_h)'\|_{L^2}\|w''\|_{L^2}=h\|(u-u_h)'\|_{L^2}\|u-u_h\|_{L^2} $$
+> 
+> 所以
+> $$ \|u-u_h\|_{L^2}\leqslant h\|(u-u_h)'\|_{L^2}\leqslant h^2\|u''\|_{L^2} $$
