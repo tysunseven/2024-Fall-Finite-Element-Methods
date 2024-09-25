@@ -1,11 +1,6 @@
----
-layout: default
-title: 2024-Fall-Finite-Element-Methods
----
-
 # 2024-Fall-Finite-Element-Methods
 
-<p><a href="https://tysunseven.github.io/2024-Fall-Finite-Element-Methods/WrittenAssignments/Week1_WrittenAssignment.pdf">第一周书面作业</a></p>
+<p><a href="Finite Element Methods.pdf">笔记和书面作业</a></p>
 
 - [2024-Fall-Finite-Element-Methods](#2024-fall-finite-element-methods)
   - [回顾有限差分方法](#回顾有限差分方法)
