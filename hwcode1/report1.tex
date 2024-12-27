@@ -1,0 +1,48 @@
+\documentclass{article}
+\textheight 23.5cm \textwidth 15.8cm
+%\leftskip -1cm
+\topmargin -1.5cm \oddsidemargin 0.3cm \evensidemargin -0.3cm
+%\documentclass[final]{siamltex}
+
+\usepackage{ctex}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+%\pagestyle{fancy} \lhead{FDM Homework Template} \chead{}
+%\rhead{\bfseries Yan XU}
+%
+%\lfoot{} \cfoot{} \rfoot{\thepage}
+%\renewcommand{\headrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0.4pt}
+%
+\title{第二周程序作业}
+\author{孙天阳 SA23001051}
+\date{2024年9月25日}
+\begin{document}
+\maketitle
+
+\section{引言}
+在本次作业中, 我们采用单元循环而不是基循环来组装刚度矩阵$ A $, 这种方式更易迁移到高维。
+\section{方法}
+
+\section{结果}
+\begin{table}[h!]
+    \centering
+    \caption{\( L^2 \) 和 \( H^1 \) 误差及收敛阶数}
+    \label{tab:results}
+    \begin{tabular}{ccccc}
+        \toprule
+        \( N \) & \( L^2 \) 误差 & \( L^2 \) 收敛阶数 & \( H^1 \) 误差 & \( H^1 \) 收敛阶数 \\
+        \midrule
+        10  & \( 1.40854 \times 10^{-3} \) & -    & \( 4.90167 \times 10^{-2} \) & - \\
+        20  & \( 3.86443 \times 10^{-4} \) & 1.87 & \( 2.56657 \times 10^{-2} \) & 0.93 \\
+        40  & \( 1.01409 \times 10^{-4} \) & 1.93 & \( 1.31444 \times 10^{-2} \) & 0.97 \\
+        80  & \( 2.42843 \times 10^{-5} \) & 2.06 & \( 6.65316 \times 10^{-3} \) & 0.98 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\section{讨论}
+可以看到结果与第一周程序作业完全一样，这是符合预期的，因为实际上每个量都没有发生改变，改变的只是得到这些量的方式。
+\end{document}

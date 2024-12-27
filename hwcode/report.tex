@@ -1,0 +1,63 @@
+\documentclass{article}
+\textheight 23.5cm \textwidth 15.8cm
+%\leftskip -1cm
+\topmargin -1.5cm \oddsidemargin 0.3cm \evensidemargin -0.3cm
+%\documentclass[final]{siamltex}
+
+\usepackage{ctex}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+%\pagestyle{fancy} \lhead{FDM Homework Template} \chead{}
+%\rhead{\bfseries Yan XU}
+%
+%\lfoot{} \cfoot{} \rfoot{\thepage}
+%\renewcommand{\headrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0.4pt}
+%
+\title{第一周程序作业}
+\author{孙天阳 SA23001051}
+\date{2024年9月25日}
+\begin{document}
+\maketitle
+
+\section{引言}
+本次实验旨在利用有限元方法求解两点边值问题，方程形式如下：
+\[
+-u'' = f, \quad 0 < x < 1,
+\]
+其中，边界条件为 \( u(0) = u(1) = 0 \)。通过构造有限元离散方程并采用线性基函数，我们求解了不同网格划分下的数值解，并分析其在 \( L^2 \) 和 \( H^1 \) 范数下的误差收敛性。选择的函数 \( f(x) = 2 \cos(x) - (x-1) \sin(x) \)，其精确解为 \( u(x) = (x - 1) \sin(x) \)。
+
+\section{方法}
+为了求解上述边值问题，我们采用了以下步骤：
+\begin{itemize}
+    \item 首先，将区间 \( [0, 1] \) 均匀划分为 \( N+1 \) 个子区间，生成对应的网格节点和步长 \( h \)。
+    \item 其次，组装刚度矩阵 \( A \) 和右端项向量 \( F \)，通过数值积分构造离散方程。
+    \item 解方程 \( -A u_h = F \) 获得数值解 \( u_h \)。
+    \item 计算数值解与精确解之间的 \( L^2 \) 和 \( H^1 \) 误差，并通过误差的对数关系计算收敛阶数。
+\end{itemize}
+在具体实现中，针对不同网格密度 \( N = 10, 20, 40, 80 \)，我们分别计算数值解并分析其收敛性。
+
+\section{结果}
+\begin{table}[h!]
+    \centering
+    \caption{\( L^2 \) 和 \( H^1 \) 误差及收敛阶数}
+    \label{tab:results}
+    \begin{tabular}{ccccc}
+        \toprule
+        \( N \) & \( L^2 \) 误差 & \( L^2 \) 收敛阶数 & \( H^1 \) 误差 & \( H^1 \) 收敛阶数 \\
+        \midrule
+        10  & \( 1.40854 \times 10^{-3} \) & -    & \( 4.90167 \times 10^{-2} \) & - \\
+        20  & \( 3.86443 \times 10^{-4} \) & 1.87 & \( 2.56657 \times 10^{-2} \) & 0.93 \\
+        40  & \( 1.01409 \times 10^{-4} \) & 1.93 & \( 1.31444 \times 10^{-2} \) & 0.97 \\
+        80  & \( 2.42843 \times 10^{-5} \) & 2.06 & \( 6.65316 \times 10^{-3} \) & 0.98 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\section{讨论}
+实验中我们计算了不同网格划分下的误差及收敛阶数，结果如表 \ref{tab:results} 所示。可以看到，随着网格密度的增加，\( L^2 \) 和 \( H^1 \) 误差逐渐减小，且收敛阶数总体上接近理论预测的值。具体来说，\( L^2 \) 误差的收敛阶数在 1.87 至 2.06 之间，接近理论上的 2；而 \( H^1 \) 误差的收敛阶数接近 1，这与线性有限元方法的理论结果基本一致。
+
+在编程实现上，我们将整个程序模块化，分解为几个独立的函数，包括生成网格、组装矩阵、求解有限元问题以及计算误差等部分。这样的设计思路不仅使得程序结构更加清晰，易于维护和理解，还为将来进一步拓展和改进提供了灵活性。
+\end{document}

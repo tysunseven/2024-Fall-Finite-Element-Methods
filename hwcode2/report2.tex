@@ -1,0 +1,48 @@
+\documentclass{article}
+\textheight 23.5cm \textwidth 15.8cm
+%\leftskip -1cm
+\topmargin -1.5cm \oddsidemargin 0.3cm \evensidemargin -0.3cm
+%\documentclass[final]{siamltex}
+
+\usepackage{ctex}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+%\pagestyle{fancy} \lhead{FDM Homework Template} \chead{}
+%\rhead{\bfseries Yan XU}
+%
+%\lfoot{} \cfoot{} \rfoot{\thepage}
+%\renewcommand{\headrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0.4pt}
+%
+\title{hwcode2实验报告}
+%\author{孙天阳 SA23001051}
+\date{}
+\begin{document}
+\maketitle
+
+利用有限元方法求解两点边值问题
+\[
+\begin{cases}
+-u'' = f, \quad 0 < x < 1,\\
+u(0) = u(1) = 0.
+\end{cases}
+\]
+其对应的变分问题为寻找$ u\in H_0^1([0,1]) $满足
+\[a(u,v)=\int_0^1u'v'\mathrm{d} x=(f,v)=\int_0^1fv\mathrm{d} x,\quad \forall v\in H_0^1([0,1]).\]
+在本次作业中用来近似$ H_0^1([0,1]) $的是连续分段二次多项式空间,具体而言,在$ [0,1] $中等距插入$ N $个内部节点,将之划分为$ N+1 $个区间$ [x_{i-1},x_{i}] $, $ i=1,\cdots,N+1 $.在每个区间$ [x_{i-1},x_{i}] $上, $ u $是一个二次多项式,因此$ u $在$ [x_{i-1},x_{i}] $上的表达式可以由三个点的插值决定,很自然地我们会选择$ x_{i-1},x_{i-\frac{1}{2}}:=\frac{x_{i-1}+x_i}{2},x_i $这三个点.具体而言,设$ u $在$ [x_{i-1},x_{i}] $上的表达式为
+\[u=a_ix^2+b_ix+c_i\Longrightarrow \begin{pmatrix}x_{i-1}^2&x_{i-1}&1\\\left(\frac{x_{i-1}+x_i}{2}\right)^2&\left(\frac{x_{i-1}+x_i}{2}\right)&1\\x_i^2&x_i&1\end{pmatrix}\begin{pmatrix}a_i\\b_i\\c_i\end{pmatrix}=\begin{pmatrix}u_{i-1}\\u_{i-\frac{1}{2}}\\u_i\end{pmatrix}\]
+左侧是一个Vandermonde矩阵,所以可以唯一解出$ a_i,b_i,c_i $,用$ u_{i-1},u_{i-\frac{1}{2}},u_i,x_{i-1},x_i $的值来表达,
+看起来就很不好算,所以我们先不算,将$ a_i,b_i,c_i $带回并按$ u_{i-1},u_{i-\frac{1}{2}},u_i $来整理,得到
+\[u=f^i_0(x)u_{i-1}+f^i_{\frac{1}{2}}(x)u_{i-\frac{1}{2}}+f^i_{1}(x)u_i,\]
+其中$ f^i_0(x),f^i_{\frac{1}{2}}(x),f^i_{1}(x) $是关于$ x $的二次多项式,并且我们有一个巧妙的观察,他们三个分别是在其他两个点处值为$ 0 $,在自己那个点处值为$ 1 $的二次插值多项式,其实就是Lagrange插值多项式.所以我们可以直接写出来这些表达式,不过暂时没必要就先不写了.定义形函数
+\[\vec{N}^i(x)=\begin{pmatrix}f_0^i(x)&f_{\frac{1}{2}}^i(x)&f_1^i(x)\end{pmatrix}\]
+定义$ \vec{u}_i=\begin{pmatrix}u_{i-1}&u_{i-\frac{1}{2}}&u_{i}\end{pmatrix}^T $,则$ u $在$ [x_{i-1},x_i] $上就是$ \vec{N}^i(x)\cdot \vec{u}_i $.再算一下导数
+\[u'(x)=\vec{B}^i(x)\cdot \vec{u}_i,\quad \vec{B}^i(x)=\frac{\mathrm{d}}{\mathrm{d}x}\vec{N}^i(x).\]
+这样一来
+\[a(u,v)=\sum_{i=1}^{N+1}\int_{x_{i-1}}^{x_i}u'v'\d x=\sum_{i=1}^{N+1}\int_{x_{i-1}}^{x_i}\vec{u}_i^T\vec{B}^i(x)^T\vec{B}^i(x)\vec{v}_i\d x=:\sum_{i=1}^{N+1}\vec{u}_i^TA^i\vec{v}_i=\vec{u}A\vec{v},\quad (f,v)=F\vec{v}\]
+注意目前$ \vec{u} $是一个$ 2N+3 $维的向量,但我们要求这个式子对$ u(0)=u(1)=v(0)=v(1)=0 $的$ u,v $成立,所以本质上在发挥作用的维数是$ 2N+1 $.
+\end{document}

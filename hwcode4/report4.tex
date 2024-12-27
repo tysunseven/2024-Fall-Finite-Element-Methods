@@ -1,0 +1,59 @@
+\documentclass{article}
+\textheight 23.5cm \textwidth 15.8cm
+%\leftskip -1cm
+\topmargin -1.5cm \oddsidemargin 0.3cm \evensidemargin -0.3cm
+%\documentclass[final]{siamltex}
+
+\usepackage{ctex}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+
+
+\title{hwcode4实验报告}
+\author{孙天阳 SA23001051}
+\begin{document}
+\maketitle
+\section{主程序结构}
+主函数 \texttt{hwcode4} 初始化了问题所需的参数和精确解。脚本的主要组成部分包括：
+\begin{itemize}
+    \item 定义精确解 \( u_{\text{exact}}(x, y) \)。
+    \item 定义函数 \( f(x, y) \)，即 PDE 的右端项。
+    \item 生成用于 FEM 的网格点。
+    \item 组装全局刚度矩阵 \( A \) 和载荷向量 \( F \)。
+    \item 通过求解线性系统计算解 \( u_h \)。
+    \item 计算 \( u_h \) 和 \( u_{\text{exact}} \) 之间的 \( L_2 \) 误差。
+\end{itemize}
+
+\section{函数定义}
+
+\subsection{网格生成}
+\texttt{generateGrid(N)} 函数生成了定义域 \([0, 1] \times [0, 1]\) 上的均匀网格，其分辨率由输入参数 \( N \) 决定。具体步骤包括：
+\begin{itemize}
+    \item 使用 \texttt{meshgrid} 创建网格点，并将其展开成 \( x \) 和 \( y \) 向量。
+    \item 定义边界节点作为固定节点，而内部节点作为自由节点。
+    \item 使用 Delaunay 三角剖分将区域划分为三角形，供 FEM 使用。
+\end{itemize}
+
+\subsection{形函数与局部矩阵计算}
+\texttt{compute\_local\_shape\_functions} 函数计算一个三角形单元的形函数 \( N_i, N_j, N_m \)，该单元的顶点为 \((x_i, y_i), (x_j, y_j), (x_m, y_m)\)。这些形函数用于在每个三角形内近似解。此外，该函数还计算了矩阵 \( B \)，这是局部刚度矩阵计算所必需的。
+
+\subsection{矩阵组装}
+\texttt{assemble\_matrices} 函数通过遍历网格中的每个三角形单元来计算全局刚度矩阵 \( A \) 和载荷向量 \( F \)。对于每个三角形：
+\begin{itemize}
+    \item 计算局部刚度矩阵 \( A_{\text{local}} \)，公式为 \( A_{\text{local}} = B^T \cdot B \cdot |K| \)，其中 \( |K| \) 为三角形的面积。
+    \item 通过单元中心点积分近似法计算局部载荷向量 \( F_{\text{local}} \)。
+    \item 将 \( A_{\text{local}} \) 和 \( F_{\text{local}} \) 组装到全局矩阵 \( A \) 和向量 \( F \) 中。
+\end{itemize}
+
+\subsection{误差计算}
+\texttt{compute\_L2\_error} 函数计算精确解 \( u_{\text{exact}} \) 与计算解 \( u_h \) 之间的 \( L_2 \) 误差。误差通过使用二维高斯积分在网格的所有单元上对平方差进行积分来计算。
+
+\section{结果可视化}
+代码还包含了绘图功能，用于在域上以三维形式可视化精确解和近似解。通过 \texttt{plot3DSurf} 函数可以绘制 \( u_{\text{exact}} \) 和 \( u_h \) 的三维图形。
+\section{反思}
+不知道为什么生成的结果并不正常，怀疑是三角网格没有选择一致的定向。
+
+\end{document}
